@@ -1,1 +1,1 @@
-# module-manager
+# AMM - Module Manager

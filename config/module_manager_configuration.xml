@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+   <Capability type="monitor_modules">
+      <enable>true</enable>
+   </Capability>
+</Configuration>
