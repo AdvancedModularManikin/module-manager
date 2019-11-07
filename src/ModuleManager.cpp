@@ -87,6 +87,17 @@ namespace AMM {
 
     void ModuleManager::ClearDiagnosticLog() {}
 
+    uint64_t ModuleManager::GetTimestamp() {
+       return std::chrono::duration_cast<std::chrono::seconds>(
+          std::chrono::system_clock::now().time_since_epoch()).count();
+    }
+
+    std::string ModuleManager::ExtractGUIDToString(GUID_t guid) {
+       std::ostringstream module_guid;
+       module_guid << guid;
+       return module_guid.str().substr(0, module_guid.str().find("|"));
+    }
+
     void ModuleManager::onNewLog(AMM::Log &log, SampleInfo_t *info) {
        LOG_TRACE << "Log recieved:\n"
                  << "Timestamp: " << log.timestamp() << "\n"
@@ -94,13 +105,16 @@ namespace AMM {
                  << "Level:     " << AMM::Utility::ELogLevelStr(log.level()) << "\n"
                  << "Message:   " << log.message();
 
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
+
        sqlite_config config;
        database db("amm.db", config);
        m_mapmutex.lock();
        try {
           db
-             << "insert into logs (module_id, message, log_level, timestamp) values (?,?,?,?);"
+             << "insert into logs (module_id, module_guid, message, log_level, timestamp) values (?,?,?,?,?);"
              << log.module_id().id()
+             << module_guid
              << log.message()
              << AMM::Utility::ELogLevelStr(log.level())
              << log.timestamp();
@@ -118,6 +132,9 @@ namespace AMM {
                  << "Encounter:    " << mc.educational_encounter().id() << "\n"
                  << "Timestamp:    " << mc.timestamp() << "\n"
                  << "Capabilities: Not shown";
+
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
+
        m_mapmutex.lock();
        try {
 
@@ -141,6 +158,8 @@ namespace AMM {
 
        sqlite_config config;
        database db("amm.db", config);
+
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        ostringstream statusValue;
        statusValue << status.value();
@@ -166,13 +185,11 @@ namespace AMM {
                  << "Type:      " << AMM::Utility::EControlTypeStr(simControl.type()) << "\n"
                  << "Encounter: " << simControl.educational_encounter().id();
 
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << simControl.type() << "]";
-       LogEntry newLogEntry{module_guid.str(), "AMM::SimulationControl", "n/a", simControl.timestamp(),
+       LogEntry newLogEntry{module_guid, "AMM::SimulationControl", "n/a", simControl.timestamp(),
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
 
@@ -210,16 +227,12 @@ namespace AMM {
                  << "Value:    " << AMM::Utility::EAssessmentValueStr(assessment.value()) << "\n"
                  << "Comment:  " << assessment.comment();
 
-       uint64_t timestamp = std::chrono::duration_cast<std::chrono::seconds>(
-          std::chrono::system_clock::now().time_since_epoch()).count();
-
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+       uint64_t timestamp = GetTimestamp();
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << assessment.value() << "]" << assessment.comment();
-       LogEntry newLogEntry{module_guid.str(), "AMM::Assessment", assessment.event_id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, "AMM::Assessment", assessment.event_id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -235,13 +248,11 @@ namespace AMM {
                  << "Type:      " << ef.type() << "\n"
                  << "Data:      " << ef.data();
 
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << ef.type() << "]" << ef.data();
-       LogEntry newLogEntry{module_guid.str(), "AMM::EventFragment", ef.id().id(), ef.timestamp(),
+       LogEntry newLogEntry{module_guid, "AMM::EventFragment", ef.id().id(), ef.timestamp(),
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -256,15 +267,12 @@ namespace AMM {
                  << "Agent ID:  " << er.agent_id().id() << "\n"
                  << "Type:      " << er.type() << "\n"
                  << "Data:      " << er.data();
-       uint64_t timestamp = std::chrono::duration_cast<std::chrono::seconds>(
-          std::chrono::system_clock::now().time_since_epoch()).count();
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << er.type() << "]" << er.data();
-       LogEntry newLogEntry{module_guid.str(), "AMM::EventRecord", er.id().id(), er.timestamp(),
+       LogEntry newLogEntry{module_guid, "AMM::EventRecord", er.id().id(), er.timestamp(),
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -277,15 +285,13 @@ namespace AMM {
                  << "Location:    " << ffar.location().name() << " - " << ffar.location().FMAID() << "\n"
                  << "Agent:       " << AMM::Utility::EEventAgentTypeStr(ffar.agent_type()) << "\n"
                  << "Agent ID:    " << ffar.agent_id().id();
-       uint64_t timestamp = std::chrono::duration_cast<std::chrono::seconds>(
-          std::chrono::system_clock::now().time_since_epoch()).count();
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+
+       uint64_t timestamp = GetTimestamp();
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << ffar.fragment_id().id() << "]" << ffar.status();
-       LogEntry newLogEntry{module_guid.str(), "AMM::FragmentAmendmentRequest", ffar.id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, "AMM::FragmentAmendmentRequest", ffar.id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -301,13 +307,11 @@ namespace AMM {
                  << "Type:      " << omittedEvent.type() << "\n"
                  << "Data:      " << omittedEvent.data();
 
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << omittedEvent.type() << "]" << omittedEvent.data();
-       LogEntry newLogEntry{module_guid.str(), "AMM::OmittedEvent", omittedEvent.id().id(), omittedEvent.timestamp(),
+       LogEntry newLogEntry{module_guid, "AMM::OmittedEvent", omittedEvent.id().id(), omittedEvent.timestamp(),
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -318,26 +322,24 @@ namespace AMM {
        sqlite_config config;
        database db("amm.db", config);
 
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       ostringstream moduleGuid;
-       moduleGuid << changeGuid.guidPrefix;
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        m_mapmutex.lock();
        if (opDescript.name() == "disconnect") {
           try {
-             db << "delete from module_capabilities where module_id = ? ;" << moduleGuid.str();
+             db << "delete from module_capabilities where module_id = ? ;" << module_guid;
           } catch (exception &e) {
              LOG_ERROR << e.what();
           }
-
        } else {
           try {
-             db << "replace into module_capabilities (module_id, "
+             db << "replace into module_capabilities (module_id, module_guid,"
                    "module_name, description, "
                    "manufacturer, model,"
                    "module_version, serial_number,"
-                   "capabilities) values (?,?,?,?,?,?,?,?);"
-                << moduleGuid.str() << opDescript.name() << opDescript.description()
+                   "capabilities) values (?,?,?,?,?,?,?,?,?);"
+                << opDescript.module_id().id() << module_guid
+                << opDescript.name() << opDescript.description()
                 << opDescript.manufacturer() << opDescript.model()
                 << opDescript.module_version() << opDescript.serial_number()
                 << opDescript.capabilities_schema();
@@ -356,15 +358,12 @@ namespace AMM {
                  << "Type:     " << rendMod.type() << "\n"
                  << "Data      " << rendMod.data();
 
-       uint64_t timestamp = std::chrono::duration_cast<std::chrono::seconds>(
-          std::chrono::system_clock::now().time_since_epoch()).count();
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+       uint64_t timestamp = GetTimestamp();
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << rendMod.type() << "]" << rendMod.data();
-       LogEntry newLogEntry{module_guid.str(), "AMM::RenderModification", rendMod.event_id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, "AMM::RenderModification", rendMod.event_id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -376,15 +375,12 @@ namespace AMM {
                  << "Type:     " << physMod.type() << "\n"
                  << "Data:     " << physMod.data();
 
-       uint64_t timestamp = std::chrono::duration_cast<std::chrono::seconds>(
-          std::chrono::system_clock::now().time_since_epoch()).count();
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+       uint64_t timestamp = GetTimestamp();
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
        logmessage << "[" << physMod.type() << "]" << physMod.data();
-       LogEntry newLogEntry{module_guid.str(), "AMM::PhysiologyModification", physMod.event_id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, "AMM::PhysiologyModification", physMod.event_id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -393,15 +389,13 @@ namespace AMM {
        LOG_TRACE << "Command recieved:\n"
                  << "Message:" << command.message();
 
-       uint64_t timestamp = std::chrono::duration_cast<std::chrono::seconds>(
-          std::chrono::system_clock::now().time_since_epoch()).count();
-       GUID_t changeGuid = info->sample_identity.writer_guid();
-       std::ostringstream module_guid;
-       module_guid << changeGuid;
+       uint64_t timestamp = GetTimestamp();
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
        std::ostringstream logmessage;
-       logmessage << "[" << command.message() << "]";
-       LogEntry newLogEntry{module_guid.str(), "AMM::Command", "n/a", timestamp,
+       logmessage << command.message();
+
+       LogEntry newLogEntry{module_guid, "AMM::Command", "n/a", timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }

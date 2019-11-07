@@ -57,6 +57,8 @@ namespace AMM {
 
         void ClearDiagnosticLog();
 
+        std::string ExtractGUIDToString(GUID_t guid);
+        uint64_t GetTimestamp();
 
 /// Simulation controllers
     private:

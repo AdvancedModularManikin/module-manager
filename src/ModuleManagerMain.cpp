@@ -21,7 +21,6 @@ void WipeTables() {
       db << "delete from events;";
       db << "delete from module_capabilities;";
       db << "delete from module_status;";
-      db << "delete from pubsubs;";
       db << "delete from logs;";
 
    } catch (exception &e) {
@@ -40,6 +39,7 @@ void SetupTables() {
       db << "create table if not exists events("
             "source text,"
             "module_id text,"
+            "module_guid text,"
             "module_name text,"
             "event_id text,"
             "topic text,"
@@ -50,6 +50,7 @@ void SetupTables() {
       LOG_INFO << "Creating module capabilities table...";
       db << "create table if not exists module_capabilities ("
             "module_id text,"
+            "module_guid text,"
             "module_name text,"
             "description text,"
             "manufacturer text,"
@@ -58,7 +59,6 @@ void SetupTables() {
             "serial_number text,"
             "capabilities text"
             ");";
-      db << "CREATE UNIQUE INDEX idx_module_capabilities_name ON module_capabilities (module_name);";
 
       LOG_INFO << "Creating module status table...";
       db << "create table if not exists module_status ("
@@ -67,17 +67,8 @@ void SetupTables() {
             "module_name text,"
             "capability text,"
             "status text,"
-            "timestamp text,"
+            "timestamp bigint,"
             "encounter_id text"
-            ");";
-
-      LOG_INFO << "Creating pubsub table...";
-      db << "create table if not exists pubsubs("
-            "module_id text,"
-            "module_guid text,"
-            "module_name text,"
-            "topic_type text,"
-            "topic text"
             ");";
 
       LOG_INFO << "Creating log record table...";
