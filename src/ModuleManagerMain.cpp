@@ -67,6 +67,7 @@ void SetupTables() {
             "module_name text,"
             "capability text,"
             "status text,"
+            "message text,"
             "timestamp bigint,"
             "encounter_id text"
             ");";

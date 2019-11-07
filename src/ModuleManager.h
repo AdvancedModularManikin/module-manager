@@ -4,6 +4,8 @@
 
 #include "AMM/Utility.h"
 
+#include "AMM/TopicNames.h"
+
 #include <tinyxml2.h>
 
 #include "thirdparty/sqlite_modern_cpp.h"

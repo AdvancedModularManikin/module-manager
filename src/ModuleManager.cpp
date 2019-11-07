@@ -151,7 +151,7 @@ namespace AMM {
                  << "Module ID:   " << status.module_id().id() << "\n"
                  << "Module Name: " << status.module_name() << "\n"
                  << "Encounter:   " << status.educational_encounter().id() << "\n"
-                 << "Capability:  Not shown" << "\n"
+                 << "Capability:  " << status.capability() << "\n"
                  << "Timestamp:   " << status.timestamp() << "\n"
                  << "Value:       " << AMM::Utility::EStatusValueStr(status.value()) << "\n"
                  << "Message:     " << status.message();
@@ -161,22 +161,19 @@ namespace AMM {
 
        std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
-       ostringstream statusValue;
-       statusValue << status.value();
-
        m_mapmutex.lock();
        try {
-          /**
           db << "replace into module_status (module_id, module_guid, module_name, "
-                  "capability, status) values (?,?,?,?,?);"
-               << status.module_id() << moduleGuid.str() << status.module_name()
-               << status.capability() << statusValue.str();
-               **/
+                "capability, status, timestamp, encounter_id) values (?,?,?,?,?,?,?,?);"
+             << status.module_id().id() << module_guid << status.module_name()
+             << status.capability() << AMM::Utility::EStatusValueStr(status.value())
+             << status.message()
+             << status.timestamp() << status.educational_encounter().id();
+
        } catch (exception &e) {
           LOG_ERROR << e.what();
        }
        m_mapmutex.unlock();
-
     }
 
     void ModuleManager::onNewSimulationControl(AMM::SimulationControl &simControl, SampleInfo_t *info) {
@@ -185,39 +182,34 @@ namespace AMM {
                  << "Type:      " << AMM::Utility::EControlTypeStr(simControl.type()) << "\n"
                  << "Encounter: " << simControl.educational_encounter().id();
 
-       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
-
-       std::ostringstream logmessage;
-       logmessage << "[" << simControl.type() << "]";
-       LogEntry newLogEntry{module_guid, "AMM::SimulationControl", "n/a", simControl.timestamp(),
-                            logmessage.str()};
-       WriteLogEntry(newLogEntry);
-
        switch (simControl.type()) {
           case AMM::ControlType::RUN: {
-             LOG_INFO << "Message recieved; Run sim.";
 
              break;
           }
 
           case AMM::ControlType::HALT: {
-             LOG_INFO << "Message recieved; Halt sim";
 
              break;
           }
 
           case AMM::ControlType::RESET: {
-             LOG_INFO << "Message recieved; Reset sim";
 
              break;
           }
 
           case AMM::ControlType::SAVE: {
-             LOG_INFO << "Message recieved; Save sim";
 
              break;
           }
        }
+
+       std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
+       std::ostringstream logmessage;
+       logmessage << "[" << AMM::Utility::EControlTypeStr(simControl.type()) << "]";
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::SimControl, "n/a", simControl.timestamp(),
+                            logmessage.str()};
+       WriteLogEntry(newLogEntry);
     }
 
     void ModuleManager::onNewAssessment(AMM::Assessment &assessment, SampleInfo_t *info) {
@@ -232,7 +224,7 @@ namespace AMM {
 
        std::ostringstream logmessage;
        logmessage << "[" << assessment.value() << "]" << assessment.comment();
-       LogEntry newLogEntry{module_guid, "AMM::Assessment", assessment.event_id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::Assessment, assessment.event_id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -252,7 +244,7 @@ namespace AMM {
 
        std::ostringstream logmessage;
        logmessage << "[" << ef.type() << "]" << ef.data();
-       LogEntry newLogEntry{module_guid, "AMM::EventFragment", ef.id().id(), ef.timestamp(),
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::EventFragment, ef.id().id(), ef.timestamp(),
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -272,7 +264,7 @@ namespace AMM {
 
        std::ostringstream logmessage;
        logmessage << "[" << er.type() << "]" << er.data();
-       LogEntry newLogEntry{module_guid, "AMM::EventRecord", er.id().id(), er.timestamp(),
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::EventRecord, er.id().id(), er.timestamp(),
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -291,7 +283,7 @@ namespace AMM {
 
        std::ostringstream logmessage;
        logmessage << "[" << ffar.fragment_id().id() << "]" << ffar.status();
-       LogEntry newLogEntry{module_guid, "AMM::FragmentAmendmentRequest", ffar.id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::FragmentAmendmentRequest, ffar.id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -311,7 +303,8 @@ namespace AMM {
 
        std::ostringstream logmessage;
        logmessage << "[" << omittedEvent.type() << "]" << omittedEvent.data();
-       LogEntry newLogEntry{module_guid, "AMM::OmittedEvent", omittedEvent.id().id(), omittedEvent.timestamp(),
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::OmittedEvent, omittedEvent.id().id(),
+                            omittedEvent.timestamp(),
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -363,7 +356,7 @@ namespace AMM {
 
        std::ostringstream logmessage;
        logmessage << "[" << rendMod.type() << "]" << rendMod.data();
-       LogEntry newLogEntry{module_guid, "AMM::RenderModification", rendMod.event_id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::RenderModification, rendMod.event_id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -380,7 +373,7 @@ namespace AMM {
 
        std::ostringstream logmessage;
        logmessage << "[" << physMod.type() << "]" << physMod.data();
-       LogEntry newLogEntry{module_guid, "AMM::PhysiologyModification", physMod.event_id().id(), timestamp,
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::PhysiologyModification, physMod.event_id().id(), timestamp,
                             logmessage.str()};
        WriteLogEntry(newLogEntry);
     }
@@ -392,11 +385,8 @@ namespace AMM {
        uint64_t timestamp = GetTimestamp();
        std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
-       std::ostringstream logmessage;
-       logmessage << command.message();
-
-       LogEntry newLogEntry{module_guid, "AMM::Command", "n/a", timestamp,
-                            logmessage.str()};
+       LogEntry newLogEntry{module_guid, AMM::TopicNames::Command, "n/a", timestamp,
+                            command.message()};
        WriteLogEntry(newLogEntry);
     }
 
