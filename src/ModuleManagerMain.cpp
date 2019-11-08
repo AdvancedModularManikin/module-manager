@@ -13,6 +13,7 @@ bool setup = false;
 int autostart = 0;
 bool wipe = false;
 
+/// Clears database tables.
 void WipeTables() {
    try {
       sqlite_config config;
@@ -29,6 +30,7 @@ void WipeTables() {
 
 }
 
+/// On start initialization for database tables.
 void SetupTables() {
 
    try {
@@ -89,6 +91,7 @@ void SetupTables() {
    WipeTables();
 }
 
+/// Displays current manager configuration.
 static void ShowUsage(const std::string &name) {
    cerr << "Usage: " << name << " <option(s)>"
         << "\nOptions:\n"
@@ -100,6 +103,7 @@ static void ShowUsage(const std::string &name) {
         << endl;
 }
 
+/// Main menu for Module Manager.
 void ShowMenu(AMM::ModuleManager *modManager) {
    string action;
 
@@ -129,6 +133,7 @@ void ShowMenu(AMM::ModuleManager *modManager) {
    }
 }
 
+/// Main program
 int main(int argc, char *argv[]) {
    static plog::ColorConsoleAppender<plog::TxtFormatter> consoleAppender;
    plog::init(plog::verbose, &consoleAppender);
