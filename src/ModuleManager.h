@@ -22,6 +22,9 @@ namespace AMM {
         string data = "";
     };
 
+    /// Module Manager class
+    ///
+    /// Container for Module Manager logic.
     class ModuleManager : ListenerInterface {
 
     public:
