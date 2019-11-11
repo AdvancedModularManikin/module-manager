@@ -19,5 +19,6 @@ build-*/
 
 out/
 VisualStudio/
+Doxygen/
 
 **.swp
