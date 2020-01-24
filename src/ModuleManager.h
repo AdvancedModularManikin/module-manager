@@ -14,11 +14,11 @@ namespace AMM {
 
 /// Definition for Logs.
 struct LogEntry {
-   string source;
-   string topic;
-   string event_id;
+   std::string source;
+   std::string topic;
+   std::string event_id;
    uint64_t timestamp;
-   string data = "";
+   std::string data = "";
 };
 
 /// Container for Module Manager logic.
@@ -43,7 +43,7 @@ protected:
    /// DDS Manager for this module.
    DDSManager<ModuleManager> *m_mgr = new DDSManager<ModuleManager>(config_file);
 
-   mutex m_mapmutex;
+   std::mutex m_mapmutex;
 
 public:
    ModuleManager();
