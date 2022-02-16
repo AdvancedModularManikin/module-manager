@@ -2,9 +2,9 @@
 
 #include "amm_std.h"
 
-#include "AMM/Utility.h"
+#include "amm/Utility.h"
 
-#include "AMM/TopicNames.h"
+#include "amm/TopicNames.h"
 
 #include <tinyxml2.h>
 

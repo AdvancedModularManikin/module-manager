@@ -2,7 +2,7 @@
 
 #include "thirdparty/sqlite_modern_cpp.h"
 
-#include "AMM/BaseLogger.h"
+#include "amm/BaseLogger.h"
 
 using namespace std;
 using namespace sqlite;
