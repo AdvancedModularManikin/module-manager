@@ -66,6 +66,8 @@ namespace AMM {
 
         void ClearDiagnosticLog();
 
+        void SendTestCommand(const std::string action);
+
         std::string ExtractGUIDToString(GUID_t guid);
 
         uint64_t GetTimestamp();

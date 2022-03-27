@@ -130,8 +130,8 @@ void ShowMenu(AMM::ModuleManager *modManager) {
         LOG_INFO << "Shutting down Module Manager.";
         closed = true;
         modManager->Shutdown();
-    } else {
-        /// TODO: Unknown menu action.
+    }  else {
+            /// TODO: Unknown menu action.
     }
 }
 

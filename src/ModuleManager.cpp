@@ -41,6 +41,7 @@ namespace AMM {
         m_mgr->CreateOperationalDescriptionPublisher();
         m_mgr->CreateModuleConfigurationPublisher();
         m_mgr->CreateSimulationControlPublisher();
+        m_mgr->CreateCommandPublisher();
 
         m_uuid.id(m_mgr->GenerateUuidString());
     }
@@ -376,6 +377,12 @@ namespace AMM {
         LogEntry newLogEntry{module_guid, AMM::TopicNames::PhysiologyModification, physMod.event_id().id(), timestamp,
                              logmessage.str()};
         WriteLogEntry(newLogEntry);
+    }
+
+    void ModuleManager::SendTestCommand(const std::string action) {
+        AMM::Command cmdInstance;
+        cmdInstance.message(action);
+        m_mgr->WriteCommand(cmdInstance);
     }
 
     void ModuleManager::onNewCommand(AMM::Command &command, eprosima::fastrtps::SampleInfo_t *info) {
