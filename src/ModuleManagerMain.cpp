@@ -113,6 +113,7 @@ void ShowMenu(AMM::ModuleManager *modManager) {
     cout << " [2]Setup tables" << endl;
     cout << " [3]Wipe tables" << endl;
     cout << " [4]Shutdown" << endl;
+    cout << " [5]Test scenario file loading" << endl;
     cout << " >> ";
 
     getline(cin, action);

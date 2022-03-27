@@ -403,7 +403,8 @@ namespace AMM {
 
             } else if (!value.compare(0, loadScenarioPrefix.size(), loadScenarioPrefix)) {
                 currentScenario = value.substr(loadScenarioPrefix.size());
-                // @TODO Load scenario, parse it, spew it
+                LOG_INFO << "Load scenario command received for " << currentScenario;
+                ParseScenarioFromFile("static/scenarios/" + currentScenario + ".xml");
             } else if (!value.compare(0, loadPrefix.size(), loadPrefix)) {
                 currentState = value.substr(loadStatePrefix.size());
             } else {
