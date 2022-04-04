@@ -452,7 +452,7 @@ namespace AMM {
         }
         tinyxml2::XMLElement *scenario = pRoot->FirstChildElement();
 
-        LOG_INFO << "Loading scenario: " << scenario->Name();
+        LOG_INFO << "Loading scenario: " << scenario->Attribute("name");
 
         tinyxml2::XMLElement *capability = scenario->FirstChildElement("capabilities")->FirstChildElement("capability");
 
