@@ -130,8 +130,16 @@ void ShowMenu(AMM::ModuleManager *modManager) {
         LOG_INFO << "Shutting down Module Manager.";
         closed = true;
         modManager->Shutdown();
-    }  else {
+    } else if (action == "5") {
+        LOG_INFO << "Loading scenario file via COMMAND";
+        modManager->SendTestCommand("[SYS]LOAD_SCENARIO:BVM");
+    } else if (action == "6") { 
+	LOG_INFO << "Loading scenario file via COMMAND for manikin 1";
+        modManager->SendTestCommand("[SYS]LOAD_SCENARIO:BVM;mid=manikin_1");
+
+    } else {
             /// TODO: Unknown menu action.
+
     }
 }
 

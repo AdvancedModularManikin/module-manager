@@ -4,7 +4,6 @@
       <participant profile_name="amm_participant">
          <rtps>
             <name>AMM_Module_Manager</name>
-            <participantID>15</participantID>
          </rtps>
       </participant>
    </profiles>
