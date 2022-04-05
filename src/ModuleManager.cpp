@@ -411,6 +411,15 @@ namespace AMM {
             } else if (!value.compare(0, loadScenarioPrefix.size(), loadScenarioPrefix)) {
                 currentScenario = value.substr(loadScenarioPrefix.size());
                 LOG_INFO << "Load scenario command received for " << currentScenario;
+                if (currentScenario.find(";mid=") != std::string::npos) {
+                    std::size_t pos = currentScenario.find(";mid=");
+                    std::string mid = currentScenario.substr(pos + 5);
+                    currentScenario = currentScenario.substr(0, pos);
+                    LOG_INFO << " Scene is " << currentScenario;
+                    LOG_INFO << " Manikin is " << mid;
+                } else {
+                    LOG_INFO << " Scene is " << currentScenario;
+                }
                 ParseScenarioFromFile("static/scenarios/" + currentScenario + ".xml");
             } else if (!value.compare(0, loadPrefix.size(), loadPrefix)) {
                 currentState = value.substr(loadStatePrefix.size());
@@ -445,7 +454,7 @@ namespace AMM {
         LOG_INFO << "Loading " << xmlFileName << " from filesystem.";
         tinyxml2::XMLDocument doc;
         doc.LoadFile(xmlFileName.c_str());
-        tinyxml2::XMLNode* pRoot = doc.RootElement();
+        tinyxml2::XMLNode *pRoot = doc.RootElement();
         if (pRoot == nullptr) {
             LOG_ERROR << "Unable to get XML root.";
             return;
