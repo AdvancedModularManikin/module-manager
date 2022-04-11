@@ -346,11 +346,16 @@ namespace AMM {
     }
 
     void ModuleManager::onNewRenderModification(AMM::RenderModification &rendMod, SampleInfo_t *info) {
-        LOG_TRACE << "Render Modification recieved:\n"
-                  << "ID:       " << rendMod.id().id() << "\n"
-                  << "Event ID: " << rendMod.event_id().id() << "\n"
-                  << "Type:     " << rendMod.type() << "\n"
-                  << "Data      " << rendMod.data();
+        if (rendMod.data().find("START_OF") == std::string::npos) {
+            LOG_TRACE << "Render Modification recieved:\n"
+                      << "ID:       " << rendMod.id().id() << "\n"
+                      << "Event ID: " << rendMod.event_id().id() << "\n"
+                      << "Type:     " << rendMod.type() << "\n"
+                      << "Data      " << rendMod.data();
+        } else {
+            // inhale/exhale message
+            return;
+        }
 
         uint64_t timestamp = GetTimestamp();
         std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
