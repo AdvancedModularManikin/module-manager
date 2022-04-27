@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AMMConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Scenario name="AJAMS 2 - Pneumothorax">
+        <metadata>
+            <name>patient 2</name>
+            <rank/>
+            <age units="years">28</age>
+            <gender>female</gender>
+            <height units="centimeters"/>
+            <weight units="kilograms"/>
+            <altitude units="meters">100</altitude>
+            <temperature units="celsius">25</temperature>
+            <pressure units="mmHg"/>
+            <co2/>
+            <sounds/>
+            <smells/>
+            <learnerCount>5</learnerCount>
+            <role>Medic</role>
+            <role>Paramedic</role>
+            <role>Other</role>
+            <equipment>Other</equipment>
+            <supplies>Oxygen</supplies>
+            <supplies>Other</supplies>
+            <duration units="minutes">5</duration>
+            <scenario_type>Deterministic</scenario_type>
+            <assessment_type>Formative</assessment_type>
+            <learner_group>King County Paramedics</learner_group>
+            <objective>Paramedics must assess and determine need to perform needle thoracostomy correctly within 3
+                minutes of arrival otherwise the patient will deteriorate clinical in cardiac arrest.
+            </objective>
+            <task>1. Rapid Trauma Assessment
+                a. Pulse Quality
+                1) Weak at carotid, but absent elsewhere
+            </task>
+            <task>b. Level of Consciousness
+                1) Responsive to noxious stimuli only with twitching in hands
+            </task>
+            <task>c. Jugular Vein Distension
+                1) Bilateral JVD noted
+            </task>
+            <task>d. Tracheal Deviation
+                1) Trachea is deviated to the right side
+            </task>
+            <task>e. Crepitus / bruising of left chest
+                1) “Crunching” sensation when touching left chest at site of bruising
+            </task>
+            <task>f. Subcutaneous Emphysema
+                1) “Popping” sensation when touching the left chest just inferior to the clavicle
+            </task>
+            <task>g. Unequal breath sounds
+                1) Absent breath sounds on left side as compared to right side. Absent chest wall movement on left as
+                compared to the right.
+            </task>
+            <task>2. Needle Thoracostomy
+                a. Patient Position: Supine / Flat on back
+            </task>
+            <task>a. Equipment Needed:
+                1) Gloves, Mask, Eye Protection
+                2) Iodine swab / Chlorohexidine 2%
+                3) 14 or 16-gauge needle (over-the-needle catheter) 5 cm - 8 cm in length
+            </task>
+            <task>c. Landmark: 2nd intercostal space (lateral of Angle of Louis on sternum) in mid-clavicular line on
+                affected side (left)
+            </task>
+            <task>d. Procedure: Insert needle into landmarked location cephalad over the rib until the pleura is
+                punctured (usually indicated by a pop and/or sudden decrease in resistance).
+            </task>
+            <condition>• Multiple fractured ribs on left side</condition>
+            <condition>• Closed pneumothorax on left side</condition>
+            <condition>• Hypotension secondary to tension physiology</condition>
+            <exit_criteria>Rapid recognition of subjective and objective findings consistent with tension physiology
+                secondary to pneumothorax leading to correct performance of needle thoracostomy.
+            </exit_criteria>
+            <exit_criteria>• Total time from arriving at patient side to correct needle insertion should be &lt; 3
+                minutes. If needle thoracostomy has not performed, patient enters traumatic circulatory arrest.
+            </exit_criteria>
+            <exit_criteria>• Heart Rate: Initial 130 (weak at carotid). Increased by 5 bpm per 60 seconds until needle
+                placement. HR recovers to 126 with needle placement
+            </exit_criteria>
+            <exit_criteria>• Respiratory Rate: Initial 50/min (gasping). Increased by 5 bpm per 60 seconds until needle
+                placement. RR recovers to 40/min with needle placement
+            </exit_criteria>
+            <exit_criteria>• Pulse Oximetry: Initial 81%. Decreased by 5% per 60 seconds until needle placement. SpO2
+                recovers to 85% with needle placement
+            </exit_criteria>
+            <surrounding>You arrive outside to find a home under renovation</surrounding>
+            <instruction>This scenario is designed to test your ability to recognize and treat a life-threatening
+                traumatic injury at the paramedic level scope of practice for Harborview Medical Center-trained
+                prehospital providers.
+            </instruction>
+            <narrative>You are one of two paramedics working together staffing the Paramedic (ALS) unit. Two EMTs
+                working together staffing the Aid (BLS) unit with arrive shortly after you reach the patient. There will
+                be one role player on scene to provide information. The manikin represents the patient.
+
+                Both Paramedics &amp; EMTs should be operating the with the same scope of practice and expectations.
+            </narrative>
+        </metadata>
+        <authors/>
+        <capabilities>
+            <capability name="physiology_engine" required="true" enabled="true">
+                <configuration_data>
+                    <data name="state_file" value="Scenario2TensionPneumo1p0@120s.xml"/>
+                </configuration_data>
+            </capability>
+            <capability name="ajams_instructor_app" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Skin checked" event="HEAD_FEEL_SKIN" automated="false"/>
+                            <Assessment description="Airway checked" event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Pulse checked" event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Pupils checked" event="CHECK_PUPILS" automated="false"/>
+                            <Assessment description="BP cuff applied" event="CONNECT_NIBP" automated="true"/>
+                            <Assessment description="Blood pressure checked" event="TAKE_BP" automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Respiratory rate checked" event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="SpO2 checked" event="TAKE_SPO2" automated="false"/>
+                            <Assessment description="Checked lung sounds" event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="Checked jugular vein" event="CHECK_NECK" automated="false"/>
+                            <Assessment description="Checked tracheal deviation" event="CHECK_TRACHEA"
+                                        automated="false"/>
+                            <Assessment description="Checked for trauma" event="CHECK_HEAD" automated="false"/>
+                            <Assessment description="Observed chest wall movement" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Checked for resonance" event="PERCUSS_CHEST" automated="false"/>
+                            <Assessment description="Identified landmark for NCD" event="PALPATE_CHEST"
+                                        automated="false"/>
+                            <Assessment description="NCD needle inserted" event="NEEDLE_D_L" automated="true"/>
+                            <Assessment description="re-assessment: initial, vital, physical" event="TAKE_PULSE"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="simple_assessment" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Skin checked" event="HEAD_FEEL_SKIN" automated="false"/>
+                            <Assessment description="Airway checked" event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Pulse checked" event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Pupils checked" event="CHECK_PUPILS" automated="false"/>
+                            <Assessment description="BP cuff applied" event="CONNECT_NIBP" automated="true"/>
+                            <Assessment description="Blood pressure checked" event="TAKE_BP" automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Respiratory rate checked" event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="SpO2 checked" event="TAKE_SPO2" automated="false"/>
+                            <Assessment description="Checked lung sounds" event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="Checked jugular vein" event="CHECK_NECK" automated="false"/>
+                            <Assessment description="Checked tracheal deviation" event="CHECK_TRACHEA"
+                                        automated="false"/>
+                            <Assessment description="Checked for trauma" event="CHECK_HEAD" automated="false"/>
+                            <Assessment description="Observed chest wall movement" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Checked for resonance" event="PERCUSS_CHEST" automated="false"/>
+                            <Assessment description="Identified landmark for NCD" event="PALPATE_CHEST"
+                                        automated="false"/>
+                            <Assessment description="NCD needle inserted" event="NEEDLE_D_L" automated="true"/>
+                            <Assessment description="re-assessment: initial, vital, physical" event="TAKE_PULSE"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="sound" required="false" enabled="true" module_name="sound_module">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="enable" type="boolean" value="true"/>
+                </configuration_data>
+            </capability>
+            <capability name="patient_monitor" required="true" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="ecg_attached" type="boolean" value="true"/>
+                    <data name="pulse_ox_attached" type="boolean" value="true"/>
+                    <data name="temp_probe_attached" type="boolean" value="true"/>
+                    <data name="nibp_attached" type="boolean" value="true"/>
+                    <data name="art_line_attached" type="boolean" value="true"/>
+                    <data name="et_tube_attached" type="boolean" value="true"/>
+                </configuration_data>
+            </capability>
+        </capabilities>
+    </Scenario>
+</AMMConfiguration>

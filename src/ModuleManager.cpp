@@ -165,7 +165,7 @@ namespace AMM {
         m_mapmutex.lock();
         try {
             db << "replace into module_status (module_id, module_guid, module_name, "
-                  "capability, status, timestamp, encounter_id) values (?,?,?,?,?,?,?,?);"
+                  "capability, status, timestamp, encounter_id) values (?,?,?,?,?,?,?);"
                << status.module_id().id() << module_guid << status.module_name()
                << status.capability() << AMM::Utility::EStatusValueStr(status.value())
                << status.message()

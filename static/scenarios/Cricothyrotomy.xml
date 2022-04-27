@@ -1,0 +1,177 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AMMConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Scenario name="AJAMS 4 - Cricothyrotomy">
+        <metadata>
+            <name>Bilbo</name>
+            <rank/>
+            <age units="years">30</age>
+            <gender>male</gender>
+            <height units="centimeters"/>
+            <weight units="kilograms"/>
+            <altitude units="meters"/>
+            <temperature units="celsius"/>
+            <pressure units="mmHg"/>
+            <co2/>
+            <sounds/>
+            <smells/>
+            <learnerCount>3</learnerCount>
+            <role>Paramedic</role>
+            <equipment>Laryngoscope</equipment>
+            <equipment>Nasal Cannula</equipment>
+            <equipment>Cric Kit</equipment>
+            <equipment>Other</equipment>
+            <supplies>Oxygen</supplies>
+            <supplies>Normal Saline</supplies>
+            <supplies>Epi-pen</supplies>
+            <supplies>Endotracheal</supplies>
+            <supplies>iGel</supplies>
+            <supplies>Other</supplies>
+            <duration units="minutes">10</duration>
+            <scenario_type>deterministic</scenario_type>
+            <assessment_type>Formative</assessment_type>
+            <learner_group>King County Paramedics</learner_group>
+            <objective>The Paramedic Team will recognize lack of breathing and determine the need to secure the airway.
+                The intent of this exercise is to Recognize the importance of excellent BLS skills followed by high
+                performance ALS skills as the team moves through airway options from least invasive to most invasive
+                using a systematic and efficient approach. The use of Bag Valve Mask, ETCO2, oral and nasal airways, DL
+                and VL intubation, iGel’s and finally a successfully secured surgical airway with 6.0 endotracheal tube
+                will end the exercise.
+            </objective>
+            <task>recognize the patient is not breathing and a need to intervene is determined by:</task>
+            <task>1. Use of a BVM with oral or nasal airways and two-person mask assist. Poor chest rise and fall
+                despite good technique.
+                a. Show high performance skills with a BVM (1 &amp; 2 person), able to size and properly insert OPA and
+                NPA
+            </task>
+            <task>2. One attempt at oral tracheal intubation using DL, can’t intubate.
+                a. uses a methodical checklist approach.
+            </task>
+            <task>3. Uses iGel in between intubation attempt or 2-person BVM. Poor chest-rise and fall despite good
+                technique.
+            </task>
+            <task>4. One attempt at oral tracheal intubation using VL, can’t intubate.
+                a. uses a methodical checklist approach.
+            </task>
+            <task>5. Uses iGel in between intubation attempt. Poor chest-rise and fall despite good technique</task>
+            <task>6. Performs surgical airway.
+                a. Able to perform a surgical airway efficiently within 60 seconds.
+            </task>
+            <condition>Pale, unconscious, just became apneic, has a bounding pulse and BP</condition>
+            <exit_criteria>efficiently and successfully perform surgical airway and secure airway without patient
+                resulting in cardiac arrest due to loss of airway. (Assessment Instruments for more detail)
+            </exit_criteria>
+            <exit_criteria>• Patient should have a surgical airway within 60 seconds from decision to cut.
+            </exit_criteria>
+            <exit_criteria>• O2 saturation begins at 90% and reduces by 10% every 30 seconds</exit_criteria>
+            <exit_criteria>• HR begins at 60 and reduces by 5 every 30 seconds</exit_criteria>
+            <exit_criteria>• ETCO2 begins at 55 and increases by 10 every 30 seconds</exit_criteria>
+            <exit_criteria>• If surgical airway is successful, O2 sat increases to 96%, ETCO2 is 40</exit_criteria>
+            <exit_criteria>• During surgical airway, when timer hits 60 seconds, HR hits 40 and O2 sat reaches 60%,
+                patient is in cardiac arrest and a idioventricular wide PEA rhythm is observed (ETCO2 = 10)
+            </exit_criteria>
+            <instruction>This scenario based difficult airway scenario is designed to practice what you would do in real
+                life at real speed. The expectation is that you will perform BVM, OPA and NPA, Apneic Oxygenation, DL
+                and VL (if able), iGel use and surgical airway in a measured and systematic approach. If your agency has
+                an intubation checklist please use it (one will be provided for you specific to your agency).
+
+                3 participants are needed per session Paramedic1, Paramedic2, 3rd Paramedic functions as an EMTs. At the
+                end of the scenario, the 3 participants rotate and the scenario is repeated until all 3 participants
+                have filled all three roles.
+            </instruction>
+            <narrative>You are at the scene of a trauma patient who fell off the roof, landing on concrete. The patient
+                is unconscious, unresponsive, GCS 3, just stopped breathing and has no gag reflex, yet still has a
+                pulse. EMT’s have applied a C-collar/Backboard and straps and are having difficulty with BVM. Your
+                partner has already placed an IV. You have decided the patient needs an airway.
+            </narrative>
+        </metadata>
+        <authors/>
+        <capabilities>
+            <capability name="physiology_engine" required="true" enabled="true">
+                <configuration_data>
+                    <data name="state_file" value="Scenario4Succs@60s.xml"/>
+                </configuration_data>
+            </capability>
+            <capability name="ajams_instructor_app" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Airway checked" event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Pulse checked" event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="BP cuff applied" event="CONNECT_NIBP" automated="true"/>
+                            <Assessment description="Blood pressure checked" event="TAKE_BP" automated="false"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Blood Glucose checked " event="BLOOD_CULTURES" automated="false"/>
+                            <Assessment description="BVM w/ O2 applied " event="BVM_ON" automated="true"/>
+                            <Assessment description="OPA/NPA applied " event="MASK_INSERT_NASAL_AW" automated="false"/>
+                            <Assessment description="BVM 2-person attempted" event="" automated="false"/>
+                            <Assessment description="Intubation attempted" event="" automated="false"/>
+                            <Assessment description="iGel applied" event="" automated="false"/>
+                            <Assessment description="Intubation attempted" event="" automated="false"/>
+                            <Assessment description="BVM 2-person attempted" event="" automated="false"/>
+                            <Assessment description="Cric performed " event="MASK_INSERT_ET_TUBE_CORRECT "
+                                        automated="true"/>
+                            <Assessment description="Placement of ETT verified" event="CHECK_ETT" automated="false"/>
+                            <Assessment description="re-assessment: initial, vital, physical" event="TAKE_PULSE"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="simple_assessment" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Airway checked" event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Pulse checked" event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="BP cuff applied" event="CONNECT_NIBP" automated="true"/>
+                            <Assessment description="Blood pressure checked" event="TAKE_BP" automated="false"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Blood Glucose checked " event="BLOOD_CULTURES" automated="false"/>
+                            <Assessment description="BVM w/ O2 applied " event="BVM_ON" automated="true"/>
+                            <Assessment description="OPA/NPA applied " event="MASK_INSERT_NASAL_AW" automated="false"/>
+                            <Assessment description="BVM 2-person attempted" event="" automated="false"/>
+                            <Assessment description="Intubation attempted" event="" automated="false"/>
+                            <Assessment description="iGel applied" event="" automated="false"/>
+                            <Assessment description="Intubation attempted" event="" automated="false"/>
+                            <Assessment description="BVM 2-person attempted" event="" automated="false"/>
+                            <Assessment description="Cric performed " event="MASK_INSERT_ET_TUBE_CORRECT "
+                                        automated="true"/>
+                            <Assessment description="Placement of ETT verified" event="CHECK_ETT" automated="false"/>
+                            <Assessment description="re-assessment: initial, vital, physical" event="TAKE_PULSE"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="sound" required="false" enabled="true" module_name="sound_module">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="enable" type="boolean" value="true"/>
+                </configuration_data>
+            </capability>
+            <capability name="patient_monitor" required="true" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="ecg_attached" type="boolean" value="true"/>
+                    <data name="pulse_ox_attached" type="boolean" value="true"/>
+                    <data name="temp_probe_attached" type="boolean" value="true"/>
+                    <data name="nibp_attached" type="boolean" value="true"/>
+                    <data name="art_line_attached" type="boolean" value="true"/>
+                    <data name="et_tube_attached" type="boolean" value="true"/>
+                </configuration_data>
+            </capability>
+        </capabilities>
+    </Scenario>
+</AMMConfiguration>

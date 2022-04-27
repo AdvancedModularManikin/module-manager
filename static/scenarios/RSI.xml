@@ -1,0 +1,211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AMMConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Scenario name="AJAMS 3 - RSI">
+        <metadata>
+            <name>tar</name>
+            <rank/>
+            <age units="years">28</age>
+            <gender>male</gender>
+            <height units="centimeters"/>
+            <weight units="kilograms"/>
+            <altitude units="meters"/>
+            <temperature units="celsius"/>
+            <pressure units="mmHg"/>
+            <co2/>
+            <sounds/>
+            <smells/>
+            <learnerCount>3</learnerCount>
+            <role>Paramedic</role>
+            <equipment>Laryngoscope</equipment>
+            <equipment>BVM</equipment>
+            <equipment>Nasal Cannula</equipment>
+            <equipment>Bougie</equipment>
+            <equipment>Nebulizer</equipment>
+            <supplies>Oxygen</supplies>
+            <supplies>Normal Saline</supplies>
+            <supplies>Ringer's Lactate</supplies>
+            <supplies>RSI Drugs</supplies>
+            <supplies>Endotracheal</supplies>
+            <supplies>Other</supplies>
+            <duration units="minutes">10</duration>
+            <scenario_type>non-deterministic</scenario_type>
+            <assessment_type>Formative</assessment_type>
+            <learner_group>King County Paramedics</learner_group>
+            <objective>Recognize the need for rapid sequence intubation (RSI) and work through the appropriate steps to
+                achieve a secure airway in a sick patient. ALS and BLS interaction including patient assessment, vital
+                signs, proper medication administration for Brochospasm and placement of ETT using RSI medications.
+            </objective>
+            <task>Recognize a sick patient that requires both oxygenation and ventilation.</task>
+            <task>1. BVM assisted respirations</task>
+            <task>2. Move to CPAP if time allows. Consider CPAP/ Nebulizer if available</task>
+            <task>3. Consider IM epi</task>
+            <task>4. Position patient to recruit lung space (if available)</task>
+            <task>5. Monitor capnography, BP, HR, RR, O2 saturation, EKG</task>
+            <task>6. Start IV</task>
+            <task>7. Apneic oxygenation w/ nasal cannula</task>
+            <task>8. Administer RSI drugs (appropriate meds and dosages (which may vary)</task>
+            <task>9. Use a checklist approach including failed airway plan</task>
+            <task>10. Use Direct or Video laryngoscopy</task>
+            <task>11. Administer inline nebulizer or MDI post intubation</task>
+            <task>12. Administer post intubation drugs</task>
+            <condition>• Airway: Open</condition>
+            <condition>• Breathing: audible wheezes, low tidal volume, RR 38, Capnograph is “shark fin” shape.
+                Respiratory rate quickly decreases to 8 (labored) over 2-minute period.
+                O2 saturation starts at 89%
+            </condition>
+            <condition>• Circulation: HR 130, bounding. BP 160/90</condition>
+            <condition>• LOC: initially alert &amp; oriented in a tripod position. quickly decreases to lethargy over
+                2-minute period. Becomes slumped if patient position not corrected
+            </condition>
+            <exit_criteria>Rapidly recognize the need for RSI efficiently and successfully</exit_criteria>
+            <exit_criteria>• Successfully intubate patient using rapid-sequence-intubation (RSI) without desaturation
+                below 90%
+            </exit_criteria>
+            <exit_criteria>• Confirms proper placement using a minimum of three methods
+                o Visualizes ETT pass though cords
+                o Positive capnography
+                o Listens to lung sounds, sees chest rise
+            </exit_criteria>
+            <exit_criteria>• Attempts to further treat the underlying problem with medication
+                o Bronchodilators by various routes
+            </exit_criteria>
+            <instruction>This airway scenario is designed to practice what you would do on an actual EMS call, at real
+                time speed. The expectation is that you recognize sick/not sick, use of BVM and/or CPAP, apneic
+                oxygenation, proper steps to achieve RSI either with direct laryngoscopy and/or video laryngoscopy.
+
+                3 participants are needed per session Paramedic1, Paramedic2, 3rd Paramedic functions as an EMT. At the
+                end of the scenario, the 3 participants rotate and the scenario is repeated until all 3 participants
+                have filled all three roles.
+
+                The lead Paramedic will make the decisions and the “skills” medic will perform the advanced airway
+                skills. The 3rd Paramedic will assist at a EMT level.
+            </instruction>
+            <narrative>You are in the residence of a 28 y/o patient who is in respiratory distress. He or she is pale,
+                diaphoretic and speaking in two to three-word sentences. A friend of the patient tells you he/she has a
+                history of asthma and was installing sheetrock today when the patient became very short of breath.
+                He/she does not have his meter-dose inhaler (MDI) and has been progressively worse over the past hour.
+            </narrative>
+        </metadata>
+        <authors/>
+        <capabilities>
+            <capability name="physiology_engine" required="true" enabled="true">
+                <configuration_data>
+                    <data name="state_file" value="Scenario3Asthma1p0@120s.xml"/>
+                </configuration_data>
+            </capability>
+            <capability name="ajams_instructor_app" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Airway checked " event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Listened to breathing " event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Pulse checked " event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="Respiratory rate checked" event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="BP cuff applied " event="CONNECT_NIBP" automated="true"/>
+                            <Assessment description="Blood pressure checked" event="TAKE_BP" automated="false"/>
+                            <Assessment description="ECG leads applied" event="CONNECT_ECG" automated="true"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Skin observed" event=" HEAD_FEEL_SKIN" automated="false"/>
+                            <Assessment description="Patient positioned properly" event="SUPINE_POSITION"
+                                        automated="false"/>
+                            <Assessment description="HEPA added to BVM" event="HEPA_ADDED_BVM" automated="false"/>
+                            <Assessment description="BVM" event="BVM_ON" automated="true"/>
+                            <Assessment description="EtCO2 sensor attached " event="CONNECT_ETCO2" automated="true"/>
+                            <Assessment description="CPAP applied " event="APPLY_CPAP" automated="false"/>
+                            <Assessment description="IM epi administered" event="EPI_IM_GIVEN  " automated="true"/>
+                            <Assessment description="High flow nasal cannula attached " event="O2_GIVEN"
+                                        automated="true"/>
+                            <Assessment description="IV started " event="IV_STARTED " automated="true"/>
+                            <Assessment description="Sedative administered " event="SEDATIVE_GIVEN" automated="true"/>
+                            <Assessment description="Paralytic administered " event="PARALYTIC_GIVEN" automated="true"/>
+                            <Assessment description="Post intubation drugs administered"
+                                        event="POST_INTUBATION_DRUGS_GIVEN " automated="true"/>
+                            <Assessment description="Laryngoscopy performed " event="MASK_INSERT_ET_TUBE_CORRECT "
+                                        automated="true"/>
+                            <Assessment description="Placement of ETT verified" event="CHECK_ETT" automated="false"/>
+                            <Assessment description="Inline MDI" event="MDI_STARTED" automated="true"/>
+                            <Assessment description="Nebulizer administered" event="NEB_STARTED" automated="true"/>
+                            <Assessment description="Bronchodilator administered " event="BRONCHODILATOR_GIVEN"
+                                        automated="true"/>
+                            <Assessment description="re-assessment: initial, vital, physical" event="TAKE_PULSE"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="simple_assessment" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Airway checked " event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="Listened to breathing " event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Pulse checked " event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="Respiratory rate checked" event="LISTEN_TO_BREATHING"
+                                        automated="false"/>
+                            <Assessment description="BP cuff applied " event="CONNECT_NIBP" automated="true"/>
+                            <Assessment description="Blood pressure checked" event="TAKE_BP" automated="false"/>
+                            <Assessment description="ECG leads applied" event="CONNECT_ECG" automated="true"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Skin observed" event=" HEAD_FEEL_SKIN" automated="false"/>
+                            <Assessment description="Patient positioned properly" event="SUPINE_POSITION"
+                                        automated="false"/>
+                            <Assessment description="HEPA added to BVM" event="HEPA_ADDED_BVM" automated="false"/>
+                            <Assessment description="BVM" event="BVM_ON" automated="true"/>
+                            <Assessment description="EtCO2 sensor attached " event="CONNECT_ETCO2" automated="true"/>
+                            <Assessment description="CPAP applied " event="APPLY_CPAP" automated="false"/>
+                            <Assessment description="IM epi administered" event="EPI_IM_GIVEN  " automated="true"/>
+                            <Assessment description="High flow nasal cannula attached " event="O2_GIVEN"
+                                        automated="true"/>
+                            <Assessment description="IV started " event="IV_STARTED " automated="true"/>
+                            <Assessment description="Sedative administered " event="SEDATIVE_GIVEN" automated="true"/>
+                            <Assessment description="Paralytic administered " event="PARALYTIC_GIVEN" automated="true"/>
+                            <Assessment description="Post intubation drugs administered"
+                                        event="POST_INTUBATION_DRUGS_GIVEN " automated="true"/>
+                            <Assessment description="Laryngoscopy performed " event="MASK_INSERT_ET_TUBE_CORRECT "
+                                        automated="true"/>
+                            <Assessment description="Placement of ETT verified" event="CHECK_ETT" automated="false"/>
+                            <Assessment description="Inline MDI" event="MDI_STARTED" automated="true"/>
+                            <Assessment description="Nebulizer administered" event="NEB_STARTED" automated="true"/>
+                            <Assessment description="Bronchodilator administered " event="BRONCHODILATOR_GIVEN"
+                                        automated="true"/>
+                            <Assessment description="re-assessment: initial, vital, physical" event="TAKE_PULSE"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="sound" required="false" enabled="true" module_name="sound_module">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="enable" type="boolean"/>
+                </configuration_data>
+            </capability>
+            <capability name="patient_monitor" required="true" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="ecg_attached" type="boolean" value="true"/>
+                    <data name="pulse_ox_attached" type="boolean" value="true"/>
+                    <data name="temp_probe_attached" type="boolean" value="true"/>
+                    <data name="nibp_attached" type="boolean" value="true"/>
+                    <data name="art_line_attached" type="boolean" value="true"/>
+                    <data name="et_tube_attached" type="boolean" value="true"/>
+                </configuration_data>
+            </capability>
+        </capabilities>
+    </Scenario>
+</AMMConfiguration>

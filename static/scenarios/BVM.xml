@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<AMMConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Scenario name="AJAMS 1 - BVM">
+        <metadata>
+            <name>Bop</name>
+            <rank/>
+            <age units="years">32</age>
+            <gender>male</gender>
+            <height units="centimeters">178</height>
+            <weight units="kilograms">85</weight>
+            <altitude units="meters"/>
+            <temperature units="celsius"/>
+            <pressure units="mmHg"/>
+            <co2/>
+            <sounds/>
+            <smells/>
+            <learnerCount>2</learnerCount>
+            <role>Paramedic</role>
+            <equipment>BVM</equipment>
+            <equipment>Nasal Cannula</equipment>
+            <equipment>Other</equipment>
+            <supplies>Oxygen</supplies>
+            <supplies>Normal Saline</supplies>
+            <supplies>RSI Drugs</supplies>
+            <supplies>Narcan</supplies>
+            <supplies>iGel</supplies>
+            <duration units="minutes">5</duration>
+            <scenario_type>Deterministic</scenario_type>
+            <assessment_type>Formative</assessment_type>
+            <learner_group>King County Paramedics</learner_group>
+            <objective>he Paramedic Team will recognize inadequate respiratory effort and determine the need to provide
+                ventilation and oxygenation. The intent of this exercise is to recognize basic airway management and
+                begin the process with BLS skills; to include positioning, oxygenation and ventilation. ALS skills such
+                as use of medications and an advanced airway may be utilized if needed.
+            </objective>
+            <task>1. Determine that patient is unresponsive to verbal or motor stimuli</task>
+            <task>2. Determine that patient has a pulse</task>
+            <task>3. Establish an airway on patient by positioning in a neutral supine position, confirm no visual
+                obstruction, open airway w/ either jaw thrust or head tilt, chin lift
+            </task>
+            <task>4. Determine breathing effort or lack thereof</task>
+            <task>5. Begin airway support w/ BVM and supplementary oxygen</task>
+            <task>6. Determine that MOI is likely opioid overdose and administer Narcan</task>
+            <task>7. Continue airway support until patient has spontaneous and adequate respirations</task>
+            <condition>• Airway: Airway is initially occluded due to position, chin to chest</condition>
+            <condition>• Breathing: shallow breathing, weak effort, rate of 4</condition>
+            <condition>• Circulation: Strong radial pulse of 60. Pt is cyanotic</condition>
+            <condition>• LOC: AVPU/GCS: unresponsive/GCS 3</condition>
+            <exit_criteria>• Patient exam must follow standard steps of determining LOC, ABC/CAB. When breathing is
+                determined to be inadequate, it must be addressed before moving to further exam.
+            </exit_criteria>
+            <exit_criteria>• Airway positioning, BVM and oxygen delivery must be performed before Narcan
+                administration
+            </exit_criteria>
+            <exit_criteria>• O2 saturation begins at 70% and reduces by 10% every 30 seconds</exit_criteria>
+            <exit_criteria>• HR begins at 60 and reduces by 5 every 30 seconds</exit_criteria>
+            <exit_criteria>• Once BVM and oxygen are initiated, O2 sat improves to 99% as long as efforts continue
+            </exit_criteria>
+            <exit_criteria>• Patient LOC and respiratory effort improve 2 minutes after Narcan administration
+            </exit_criteria>
+            <instruction>This scenario-based airway scenario is designed to practice what you would do in real life at
+                real speed. The expectation is that you will perform proper airway positioning, BVM w/ supplementary
+                oxygen, and determine that Narcan is appropriate after BLS skills have been performed. Continue
+                treatment until patient has adequate spontaneous respirations.
+
+                A minimum of 2 Paramedics is needed per session. A 2 person BLS crew may be used as well, however all
+                members should arrive on scene at the same time, so that all members involved will have a chance to
+                initially manage the airway using BLS skills.
+            </instruction>
+            <narrative>You are dispatched to an adult male, slumped over on the ground at a bus stop. The 911 caller is
+                unsure if the patient is breathing. The bus stop is in a public place, outdoors, mild weather,
+                afternoon, scene is secure.
+            </narrative>
+        </metadata>
+        <authors/>
+        <capabilities>
+            <capability name="physiology_engine" required="true" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="state_file" type="string" value="Scenario1SuccsObstruction@60s.xml"/>
+                </configuration_data>
+            </capability>
+            <capability name="simple_assessment" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Pulse checked" event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="Skin checked" event="HEAD_FEEL_SKIN" automated="false"/>
+                            <Assessment description="Patient positioned properly" event="SUPINE_POSITION"
+                                        automated="false"/>
+                            <Assessment description="Airway checked" event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Opened airway" event="JAW_THRUST" automated="false"/>
+                            <Assessment description="BVM applied" event="BVM_ON" automated="true">
+                                <PhysiologyModification type="BVM">
+                                    <!-- phys mod XML goes here -->
+                                </PhysiologyModification>
+                            </Assessment>
+                            <Assessment description="Supplemental O2 applied" event="O2_GIVEN" automated="true">
+                                <PhysiologyModification type="O2">
+                                    <!-- phys mod XML goes here -->
+                                </PhysiologyModification>
+                            </Assessment>
+                            <Assessment description="Pupils checked" event="CHECK_PUPILS" automated="false"/>
+                            <Assessment description="Checked for trauma" event="CHECK_HEAD" automated="false"/>
+                            <Assessment description="Checked for IV drug use" event="CHECK_IV_DRUG_USE"
+                                        automated="false"/>
+                            <Assessment description="Naloxone administered" event="NALOXONE_GIVEN" automated="true">
+                                <PhysiologyModification type="DRUG_ADMINISTERED">
+                                    <Substance>Naloxone</Substance>
+                                    <Dose>1</Dose>
+                                </PhysiologyModification>
+                            </Assessment>
+                            <Assessment description="Continued airway support" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="ajams_instructor_app" required="false" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="checklist" type="simple_assessment">
+                        <AssessmentList type="sequential">
+                            <Assessment description="Observed breathing" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                            <Assessment description="LOC checked" event="CHECK_GCS" automated="false"/>
+                            <Assessment description="Pulse ox applied" event="CONNECT_PULSE_OX" automated="true"/>
+                            <Assessment description="Pulse checked" event="TAKE_PULSE" automated="false"/>
+                            <Assessment description="Skin checked" event="HEAD_FEEL_SKIN" automated="false"/>
+                            <Assessment description="Patient positioned properly" event="SUPINE_POSITION"
+                                        automated="false"/>
+                            <Assessment description="Airway checked" event="CHECK_MOUTH" automated="false"/>
+                            <Assessment description="Opened airway" event="JAW_THRUST" automated="false"/>
+                            <Assessment description="BVM applied" event="BVM_ON" automated="true">
+                                <PhysiologyModification type="BVM">
+                                    <!-- phys mod XML goes here -->
+                                </PhysiologyModification>
+                            </Assessment>
+                            <Assessment description="Supplemental O2 applied" event="O2_GIVEN" automated="true">
+                                <PhysiologyModification type="O2">
+                                    <!-- phys mod XML goes here -->
+                                </PhysiologyModification>
+                            </Assessment>
+                            <Assessment description="Pupils checked" event="CHECK_PUPILS" automated="false"/>
+                            <Assessment description="Checked for trauma" event="CHECK_HEAD" automated="false"/>
+                            <Assessment description="Checked for IV drug use" event="CHECK_IV_DRUG_USE"
+                                        automated="false"/>
+                            <Assessment description="Naloxone administered" event="NALOXONE_GIVEN" automated="true">
+                                <PhysiologyModification type="DRUG_ADMINISTERED">
+                                    <Substance>Naloxone</Substance>
+                                    <Dose>1</Dose>
+                                </PhysiologyModification>
+                            </Assessment>
+                            <Assessment description="Continued airway support" event="LOOK_LISTEN_FEEL_CHEST"
+                                        automated="false"/>
+                        </AssessmentList>
+                    </data>
+                </configuration_data>
+            </capability>
+            <capability name="sound" required="false" enabled="true" module_name="sound_module">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="enable" type="boolean" value="true"/>
+                </configuration_data>
+            </capability>
+            <capability name="patient_monitor" required="true" enabled="true">
+                <published_topics/>
+                <subscribed_topics/>
+                <configuration_data>
+                    <data name="ecg_attached" type="boolean" value="true"/>
+                    <data name="pulse_ox_attached" type="boolean" value="true"/>
+                    <data name="temp_probe_attached" type="boolean" value="true"/>
+                    <data name="nibp_attached" type="boolean" value="true"/>
+                    <data name="art_line_attached" type="boolean" value="true"/>
+                    <data name="et_tube_attached" type="boolean" value="true"/>
+                </configuration_data>
+            </capability>
+        </capabilities>
+    </Scenario>
+</AMMConfiguration>
