@@ -136,6 +136,8 @@ namespace AMM {
         void onNewCommand(AMM::Command &command, eprosima::fastrtps::SampleInfo_t *info);
 
         void ParseCapabilities(tinyxml2::XMLElement *node);
+
+        void ParseMetadata(tinyxml2::XMLElement *node);
     };
 
 

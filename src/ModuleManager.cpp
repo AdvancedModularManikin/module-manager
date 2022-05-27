@@ -468,6 +468,13 @@ namespace AMM {
 
         LOG_INFO << "Loading scenario: " << scenario->Attribute("name");
 
+        tinyxml2::XMLElement *metadata = scenario->FirstChildElement("metadata");
+
+        if (metadata != nullptr) {
+            LOG_TRACE << "Metadata is present, so let's parse and publish it.";
+            ParseMetadata(metadata);
+        }
+
         tinyxml2::XMLElement *capability = scenario->FirstChildElement("capabilities")->FirstChildElement("capability");
 
         if (capability == nullptr) {
@@ -476,6 +483,17 @@ namespace AMM {
         }
 
         ParseCapabilities(capability);
+    }
+
+    void ModuleManager::ParseMetadata(tinyxml2::XMLElement *node) {
+        tinyxml2::XMLPrinter printer;
+        node->Accept(&printer);
+        AMM::ModuleConfiguration mc;
+        auto ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+        mc.timestamp(ms);
+        mc.name("metadata");
+        mc.capabilities_configuration(printer.CStr());
+        m_mgr->WriteModuleConfiguration(mc);
     }
 
     void ModuleManager::ParseCapabilities(tinyxml2::XMLElement *node) {
