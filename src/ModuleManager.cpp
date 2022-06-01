@@ -488,6 +488,7 @@ namespace AMM {
     void ModuleManager::ParseMetadata(tinyxml2::XMLElement *node) {
         tinyxml2::XMLPrinter printer;
         node->Accept(&printer);
+        LOG_INFO << "Sending out metadata";
         AMM::ModuleConfiguration mc;
         auto ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
         mc.timestamp(ms);
