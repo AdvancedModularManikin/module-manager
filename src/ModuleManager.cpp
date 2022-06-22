@@ -416,6 +416,14 @@ namespace AMM {
             } else if (!value.compare(0, loadScenarioPrefix.size(), loadScenarioPrefix)) {
                 currentScenario = value.substr(loadScenarioPrefix.size());
                 LOG_INFO << "Load scenario command received for " << currentScenario;
+
+                LOG_INFO << "Sending simcontrol RESET";
+                AMM::SimulationControl simControl;
+                auto ms = duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
+                simControl.timestamp(ms);
+                simControl.type(AMM::ControlType::RESET);
+                m_mgr->WriteSimulationControl(simControl);
+
                 if (currentScenario.find(";mid=") != std::string::npos) {
                     std::size_t pos = currentScenario.find(";mid=");
                     std::string mid = currentScenario.substr(pos + 5);
