@@ -336,7 +336,7 @@ namespace AMM {
                    << opDescript.name() << opDescript.description()
                    << opDescript.manufacturer() << opDescript.model()
                    << opDescript.module_version() << opDescript.serial_number()
-                   << opDescript.capabilities_schema();
+                   << opDescript.capabilities_schema().to_string();
             } catch (exception &e) {
                 LOG_ERROR << e.what();
             }
@@ -346,7 +346,7 @@ namespace AMM {
     }
 
     void ModuleManager::onNewRenderModification(AMM::RenderModification &rendMod, SampleInfo_t *info) {
-        if (rendMod.data().find("START_OF") == std::string::npos) {
+        if (rendMod.data().to_string().find("START_OF") == std::string::npos) {
             LOG_TRACE << "Render Modification recieved:\n"
                       << "ID:       " << rendMod.id().id() << "\n"
                       << "Event ID: " << rendMod.event_id().id() << "\n"
