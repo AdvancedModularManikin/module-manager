@@ -7,6 +7,7 @@
 #include "amm/TopicNames.h"
 
 #include <tinyxml2.h>
+#include <memory>
 
 #include "thirdparty/sqlite_modern_cpp.h"
 
@@ -21,7 +22,6 @@ namespace AMM {
         std::string data = "";
     };
 
-/// Container for Module Manager logic.
     class ModuleManager : ListenerInterface {
 
     public:
@@ -40,8 +40,11 @@ namespace AMM {
         /// This module's path to the config file.
         const std::string config_file = "config/module_manager_amm.xml";
 
+        /// Database file name.
+        std::string m_database_name = "mohses.db";
+
         /// DDS Manager for this module.
-        DDSManager <ModuleManager> *m_mgr = new DDSManager<ModuleManager>(config_file);
+        std::unique_ptr<DDSManager<ModuleManager>> m_mgr;
 
         std::mutex m_mapmutex;
 
@@ -66,6 +69,14 @@ namespace AMM {
 
         void ClearDiagnosticLog();
 
+        void SetupTables();
+
+        void WipeTables();
+
+        void SetDatabaseName(const std::string& dbName);
+
+        std::string GetDatabaseName() const;
+
         void SendTestCommand(const std::string action);
 
         std::string ExtractGUIDToString(GUID_t guid);
@@ -86,7 +97,6 @@ namespace AMM {
         const std::string loadStatePrefix = "LOAD_STATE:";
         const std::string sysPrefix = "[SYS]";
         const std::string actPrefix = "[ACT]";
-        const std::string loadPrefix = "LOAD_STATE:";
 
         std::string currentScenario = "NONE";
         std::string currentState = "NONE";

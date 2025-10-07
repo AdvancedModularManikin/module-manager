@@ -6,6 +6,8 @@ using namespace sqlite;
 
 namespace AMM {
     ModuleManager::ModuleManager() {
+        // Initialize the DDS Manager
+        m_mgr = std::make_unique<DDSManager<ModuleManager>>(config_file);
 
         // Initialize everything we'll need to listen for
         m_mgr->InitializeSimulationControl();
@@ -50,6 +52,44 @@ namespace AMM {
         m_mgr->Shutdown();
     }
 
+    void ModuleManager::RunSimulation() {
+        LOG_INFO << "Starting simulation run...";
+        isPaused = false;
+        currentStatus = "RUNNING";
+    }
+
+    void ModuleManager::HaltSimulation() {
+        LOG_INFO << "Halting simulation...";
+        isPaused = true;
+        currentStatus = "HALTED";
+    }
+
+    void ModuleManager::ResetSimulation() {
+        LOG_INFO << "Resetting simulation...";
+        isPaused = false;
+        currentStatus = "RESET";
+        // Clear state but keep scenario loaded
+    }
+
+    void ModuleManager::SaveSimulation() {
+        LOG_INFO << "Saving simulation state...";
+        // TODO: Implement state persistence
+        LOG_WARNING << "Save simulation not yet fully implemented.";
+    }
+
+    void ModuleManager::SetDatabaseName(const std::string& dbName) {
+        if (!dbName.empty()) {
+            m_database_name = dbName;
+            LOG_INFO << "Database name set to: " << m_database_name;
+        } else {
+            LOG_WARNING << "Attempted to set empty database name, ignoring.";
+        }
+    }
+
+    std::string ModuleManager::GetDatabaseName() const {
+        return m_database_name;
+    }
+
     void ModuleManager::PublishOperationalDescription() {
         AMM::OperationalDescription od;
         od.name(moduleName);
@@ -76,17 +116,159 @@ namespace AMM {
     }
 
     void ModuleManager::Shutdown() {
-        /// Gracefully close and delete everything created by mod manager.
+        LOG_INFO << "Module Manager shutting down...";
 
+        // Send disconnect message to other modules
+        AMM::OperationalDescription od;
+        od.name("disconnect");
+        od.module_id(m_uuid);
+        m_mgr->WriteOperationalDescription(od);
+
+        // Shutdown DDS manager
+        if (m_mgr) {
+            m_mgr->Shutdown();
+        }
+
+        LOG_INFO << "Module Manager shutdown complete.";
     }
 
     void ModuleManager::ShowStatus() {
-        // Show connected modules
+        LOG_INFO << "\n=== Module Manager Status ===";
+        std::cout << "\tCurrent Scenario: " << currentScenario << std::endl;
+        std::cout << "\tCurrent State: " << currentState << std::endl;
+        std::cout << "\tCurrent Status: " << currentStatus << std::endl;
+        std::cout << "\tPaused: " << (isPaused ? "Yes" : "No") << std::endl;
+
+        // Query database for connected modules
+        try {
+            sqlite_config config;
+            database db(m_database_name, config);
+
+            std::cout << "\n=== Connected Modules ===" << std::endl;
+            db << "SELECT module_name, model, module_version FROM module_capabilities ORDER BY module_name;"
+               >> [&](string name, string model, string version) {
+                   std::cout << "  - " << name << " (Model: " << model << ", Version: " << version << ")"  << std::endl;
+               };
+
+            std::cout << "\n=== Module Status ===";
+            db << "SELECT module_name, capability, status, message FROM module_status ORDER BY module_name, capability;"
+               >> [&](string name, string capability, string status, string message) {
+                   std::cout << "  - " << name << " / " << capability << ": " << status
+                           << (message.empty() ? "" : " - " + message)  << std::endl;
+               };
+
+        } catch (exception &e) {
+            LOG_ERROR << "Error querying status: " << e.what();
+        }
+
+        LOG_INFO << "\n============================";
     }
 
-    void ModuleManager::ClearEventLog() {}
+    void ModuleManager::ClearEventLog() {
+        LOG_INFO << "Clearing event log...";
+        try {
+            sqlite_config config;
+            database db(m_database_name, config);
+            std::lock_guard<std::mutex> lock(m_mapmutex);
+            db << "DELETE FROM events;";
+            LOG_INFO << "Event log cleared.";
+        } catch (exception &e) {
+            LOG_ERROR << "Error clearing event log: " << e.what();
+        }
+    }
 
-    void ModuleManager::ClearDiagnosticLog() {}
+    void ModuleManager::ClearDiagnosticLog() {
+        LOG_INFO << "Clearing diagnostic log...";
+        try {
+            sqlite_config config;
+            database db(m_database_name, config);
+            std::lock_guard<std::mutex> lock(m_mapmutex);
+            db << "DELETE FROM logs;";
+            LOG_INFO << "Diagnostic log cleared.";
+        } catch (exception &e) {
+            LOG_ERROR << "Error clearing diagnostic log: " << e.what();
+        }
+    }
+
+    void ModuleManager::SetupTables() {
+        LOG_INFO << "Setting up database tables...";
+        try {
+            sqlite_config config;
+            database db(m_database_name, config);
+            std::lock_guard<std::mutex> lock(m_mapmutex);
+
+            LOG_INFO << "Creating event log table...";
+            db << "create table if not exists events("
+                  "source text,"
+                  "topic text,"
+                  "event_id text,"
+                  "timestamp bigint,"
+                  "data text"
+                  ");";
+
+            LOG_INFO << "Creating module capabilities table...";
+            db << "create table if not exists module_capabilities ("
+                  "module_id text,"
+                  "module_guid text,"
+                  "module_name text,"
+                  "description text,"
+                  "manufacturer text,"
+                  "model text,"
+                  "module_version text,"
+                  "serial_number text,"
+                  "capabilities text"
+                  ");";
+
+            LOG_INFO << "Creating module status table...";
+            db << "create table if not exists module_status ("
+                  "module_id text,"
+                  "module_guid text,"
+                  "module_name text,"
+                  "capability text,"
+                  "status text,"
+                  "message text,"
+                  "timestamp bigint,"
+                  "encounter_id text"
+                  ");";
+
+            LOG_INFO << "Creating log record table...";
+            db << "create table if not exists logs("
+                  "module_id text,"
+                  "module_guid text,"
+                  "module_name text,"
+                  "message text,"
+                  "log_level text,"
+                  "timestamp bigint"
+                  ");";
+
+            LOG_INFO << "Database tables created successfully.";
+
+        } catch (exception &e) {
+            LOG_ERROR << "Error setting up tables: " << e.what();
+            return;
+        }
+        
+        WipeTables();
+    }
+
+    void ModuleManager::WipeTables() {
+        LOG_INFO << "Wiping database tables...";
+        try {
+            sqlite_config config;
+            database db(m_database_name, config);
+            std::lock_guard<std::mutex> lock(m_mapmutex);
+
+            db << "delete from events;";
+            db << "delete from module_capabilities;";
+            db << "delete from module_status;";
+            db << "delete from logs;";
+
+            LOG_INFO << "Database tables wiped successfully.";
+
+        } catch (exception &e) {
+            LOG_ERROR << "Error wiping tables: " << e.what();
+        }
+    }
 
     uint64_t ModuleManager::GetTimestamp() {
         return std::chrono::duration_cast<std::chrono::seconds>(
@@ -109,8 +291,8 @@ namespace AMM {
         std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
         sqlite_config config;
-        database db("amm.db", config);
-        m_mapmutex.lock();
+        database db(m_database_name, config);
+        std::lock_guard<std::mutex> lock(m_mapmutex);
         try {
             db
                     << "insert into logs (module_id, module_guid, message, log_level, timestamp) values (?,?,?,?,?);"
@@ -122,7 +304,6 @@ namespace AMM {
         } catch (exception &e) {
             LOG_ERROR << e.what();
         }
-        m_mapmutex.unlock();
     }
 
 
@@ -136,14 +317,12 @@ namespace AMM {
 
         std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
-        m_mapmutex.lock();
+        std::lock_guard<std::mutex> lock(m_mapmutex);
         try {
-
+            // TODO: Implement module configuration handling
         } catch (exception &e) {
             LOG_ERROR << e.what();
         }
-
-        m_mapmutex.unlock();
     }
 
 
@@ -158,11 +337,11 @@ namespace AMM {
                   << "Message:     " << status.message();
 
         sqlite_config config;
-        database db("amm.db", config);
+        database db(m_database_name, config);
 
         std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
-        m_mapmutex.lock();
+        std::lock_guard<std::mutex> lock(m_mapmutex);
         try {
             db << "replace into module_status (module_id, module_guid, module_name, "
                   "capability, status, message, timestamp, encounter_id) values (?,?,?,?,?,?,?,?);"
@@ -174,7 +353,6 @@ namespace AMM {
         } catch (exception &e) {
             LOG_ERROR << e.what();
         }
-        m_mapmutex.unlock();
     }
 
     void ModuleManager::onNewSimulationControl(AMM::SimulationControl &simControl, SampleInfo_t *info) {
@@ -185,22 +363,22 @@ namespace AMM {
 
         switch (simControl.type()) {
             case AMM::ControlType::RUN: {
-
+                RunSimulation();
                 break;
             }
 
             case AMM::ControlType::HALT: {
-
+                HaltSimulation();
                 break;
             }
 
             case AMM::ControlType::RESET: {
-
+                ResetSimulation();
                 break;
             }
 
             case AMM::ControlType::SAVE: {
-
+                SaveSimulation();
                 break;
             }
         }
@@ -314,11 +492,11 @@ namespace AMM {
         LOG_INFO << "Operational description for module " << opDescript.name() << " / model " << opDescript.model();
 
         sqlite_config config;
-        database db("amm.db", config);
+        database db(m_database_name, config);
 
         std::string module_guid = ExtractGUIDToString(info->sample_identity.writer_guid());
 
-        m_mapmutex.lock();
+        std::lock_guard<std::mutex> lock(m_mapmutex);
         if (opDescript.name() == "disconnect") {
             try {
                 db << "delete from module_capabilities where module_id = ? ;" << module_guid;
@@ -341,8 +519,6 @@ namespace AMM {
                 LOG_ERROR << e.what();
             }
         }
-        m_mapmutex.unlock();
-
     }
 
     void ModuleManager::onNewRenderModification(AMM::RenderModification &rendMod, SampleInfo_t *info) {
@@ -406,13 +582,18 @@ namespace AMM {
         if (!command.message().compare(0, sysPrefix.size(), sysPrefix)) {
             std::string value = command.message().substr(sysPrefix.size());
             if (value.compare("START_SIM") == 0) {
-
+                LOG_INFO << "Received START_SIM command";
+                RunSimulation();
             } else if (value.compare("STOP_SIM") == 0) {
-
+                LOG_INFO << "Received STOP_SIM command";
+                HaltSimulation();
             } else if (value.compare("PAUSE_SIM") == 0) {
-
+                LOG_INFO << "Received PAUSE_SIM command";
+                isPaused = true;
+                currentStatus = "PAUSED";
             } else if (value.compare("RESET_SIM") == 0) {
-
+                LOG_INFO << "Received RESET_SIM command";
+                ResetSimulation();
             } else if (!value.compare(0, loadScenarioPrefix.size(), loadScenarioPrefix)) {
                 currentScenario = value.substr(loadScenarioPrefix.size());
                 LOG_INFO << "Load scenario command received for " << currentScenario;
@@ -434,7 +615,7 @@ namespace AMM {
                     LOG_INFO << " Scene is " << currentScenario;
                 }
                 ParseScenarioFromFile("static/scenarios/" + currentScenario + ".xml");
-            } else if (!value.compare(0, loadPrefix.size(), loadPrefix)) {
+            } else if (!value.compare(0, loadStatePrefix.size(), loadStatePrefix)) {
                 currentState = value.substr(loadStatePrefix.size());
             } else {
                 messageOut << "ACT" << "=" << command.message() << std::endl;
@@ -450,9 +631,9 @@ namespace AMM {
 
     void ModuleManager::WriteLogEntry(LogEntry newLogEntry) {
         sqlite_config config;
-        database db("amm.db", config);
+        database db(m_database_name, config);
 
-        m_mapmutex.lock();
+        std::lock_guard<std::mutex> lock(m_mapmutex);
         try {
             db << "insert into events (source, topic, event_id, timestamp, data) values (?,?,?,?,?);"
                << newLogEntry.source << newLogEntry.topic << newLogEntry.event_id
@@ -460,33 +641,54 @@ namespace AMM {
         } catch (exception &e) {
             LOG_ERROR << e.what();
         }
-        m_mapmutex.unlock();
     }
 
     void ModuleManager::ParseScenarioFromFile(const std::string xmlFileName) {
         LOG_INFO << "Loading " << xmlFileName << " from filesystem.";
         tinyxml2::XMLDocument doc;
         doc.LoadFile(xmlFileName.c_str());
-        tinyxml2::XMLNode *pRoot = doc.RootElement();
-        if (pRoot == nullptr) {
-            LOG_ERROR << "Unable to get XML root.";
+
+        // Check for XML parsing errors
+        if (doc.Error()) {
+            LOG_ERROR << "Failed to load or parse XML file: " << xmlFileName
+                     << " - Error: " << doc.ErrorStr();
             return;
         }
-        tinyxml2::XMLElement *scenario = pRoot->FirstChildElement();
 
-        LOG_INFO << "Loading scenario: " << scenario->Attribute("name");
+        tinyxml2::XMLNode *pRoot = doc.RootElement();
+        if (pRoot == nullptr) {
+            LOG_ERROR << "Unable to get XML root element.";
+            return;
+        }
+
+        tinyxml2::XMLElement *scenario = pRoot->FirstChildElement();
+        if (scenario == nullptr) {
+            LOG_ERROR << "Unable to find scenario element.";
+            return;
+        }
+
+        const char* scenarioName = scenario->Attribute("name");
+        if (scenarioName != nullptr) {
+            LOG_INFO << "Loading scenario: " << scenarioName;
+        } else {
+            LOG_WARNING << "Scenario element has no name attribute.";
+        }
 
         tinyxml2::XMLElement *metadata = scenario->FirstChildElement("metadata");
-
         if (metadata != nullptr) {
             LOG_TRACE << "Metadata is present, so let's parse and publish it.";
             ParseMetadata(metadata);
         }
 
-        tinyxml2::XMLElement *capability = scenario->FirstChildElement("capabilities")->FirstChildElement("capability");
+        tinyxml2::XMLElement *capabilities = scenario->FirstChildElement("capabilities");
+        if (capabilities == nullptr) {
+            LOG_ERROR << "Unable to find capabilities element.";
+            return;
+        }
 
+        tinyxml2::XMLElement *capability = capabilities->FirstChildElement("capability");
         if (capability == nullptr) {
-            LOG_ERROR << "Unable to find capabilities";
+            LOG_ERROR << "Unable to find any capability elements.";
             return;
         }
 
@@ -508,8 +710,9 @@ namespace AMM {
     void ModuleManager::ParseCapabilities(tinyxml2::XMLElement *node) {
         while (node) {
             if (node->Attribute("name") == nullptr) {
-                LOG_INFO << "Capability is not named, we can't process it.";
-                return;
+                LOG_WARNING << "Capability is not named, skipping it.";
+                node = node->NextSiblingElement();
+                continue;
             }
             std::string capabilityName = node->Attribute("name");
             LOG_INFO << "Parsing capability " << node->Attribute("name");
